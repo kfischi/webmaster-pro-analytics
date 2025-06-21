@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דשבורד אנליטיקס - WebMaster Pro</title>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .dashboard {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            padding: 2rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .stats-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .stat-change {
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            display: inline-block;
+        }
+
+        .stat-change.positive {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .stat-change.negative {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+        }
+
+        .chart-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            position: relative;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .chart-bar-label {
+            position: absolute;
+            right: 10px;
+            color: white;
+            font-weight: 600;
+            z-index: 2;
+        }
+
+        .chart-bar-value {
+            position: absolute;
+            left: 10px;
+            color: #333;
+            font-weight: 600;
+            background: white;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .line-chart {
+            position: relative;
+            height: 300px;
+            background: linear-gradient(180deg, rgba(102, 126, 234, 0.1) 0%, transparent 100%);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .line-chart::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #667eea;
+            transform: skew(-45deg);
+        }
+
+        .analytics-tables {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .table-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .table-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th,
+        .data-table td {
+            padding: 1rem;
+            text-align: right;
+            border-bottom: 1px solid #eee;
+        }
+
+        .data-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .realtime-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .realtime-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .live-indicator {
+            width: 10px;
+            height: 10px;
+            background: #ff6b6b;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .realtime-visitors {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .visitor-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            border-right: 4px solid #667eea;
+        }
+
+        .visitor-location {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.3rem;
+        }
+
+        .visitor-page {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .visitor-time {
+            color: #999;
+            font-size: 0.8rem;
+        }
+
+        .filters {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .filter-select {
+            padding: 0.5rem 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            color: #333;
+            font-size: 0.9rem;
+        }
+
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .insights-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .insights-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #333;
+        }
+
+        .insight-item {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            border-right: 4px solid #ffa500;
+        }
+
+        .insight-text {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .insight-action {
+            color: #667eea;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                padding: 1rem;
+            }
+
+            .charts-grid,
+            .analytics-tables {
+                grid-template-columns: 1fr;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-group {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <div class="header">
+            <h1>דשבורד אנליטיקס</h1>
+            <p>WebMaster Pro - ניתוח ביצועים בזמן אמת</p>
+        </div>
+
+        <div class="filters">
+            <div class="filter-group">
+                <span class="filter-label">תקופה:</span>
+                <select class="filter-select" id="periodFilter">
+                    <option value="today">היום</option>
+                    <option value="week" selected>השבוע האחרון</option>
+                    <option value="month">החודש האחרון</option>
+                    <option value="quarter">הרבעון האחרון</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <span class="filter-label">תבנית:</span>
+                <select class="filter-select" id="templateFilter">
+                    <option value="all">כל התבניות</option>
+                    <option value="fitness">מאמן כושר</option>
+                    <option value="psychology">פסיכולוגיה</option>
+                    <option value="yoga">יוגה</option>
+                    <option value="nutrition">תזונאית</option>
+                    <option value="law">עורכי דין</option>
+                </select>
+            </div>
+            <button class="refresh-btn" onclick="refreshData()">🔄 רענן נתונים</button>
+        </div>
+
+        <div class="stats-overview">
+            <div class="stat-card">
+                <span class="stat-icon">👁️</span>
+                <span class="stat-number" id="totalVisitors">2,847</span>
+                <span class="stat-label">ביקורים השבוע</span>
+                <div class="stat-change positive">↗ +15.3%</div>
+            </div>
+            
+            <div class="stat-card">
+                <span class="stat-icon">🎯</span>
+                <span class="stat-number" id="conversionRate">12.4%</span>
+                <span class="stat-label">שיעור המרה</span>
+                <div class="stat-change positive">↗ +2.1%</div>
+            </div>
+            
+            <div class="stat-card">
+                <span class="stat-icon">📱</span>
+                <span class="stat-number" id="whatsappClicks">184</span>
+                <span class="stat-label">לחיצות WhatsApp</span>
+                <div class="stat-change positive">↗ +28.7%</div>
+            </div>
+            
+            <div class="stat-card">
+                <span class="stat-icon">⭐</span>
+                <span class="stat-number" id="topTemplate">כושר</span>
+                <span class="stat-label">תבנית פופולרית</span>
+                <div class="stat-change positive">📈 347 צפיות</div>
+            </div>
+        </div>
+
+        <div class="realtime-section">
+            <h3 class="realtime-title">
+                <span class="live-indicator"></span>
+                פעילות בזמן אמת
+            </h3>
+            <div class="realtime-visitors" id="realtimeVisitors">
+                <div class="visitor-item">
+                    <div class="visitor-location">🇮🇱 תל אביב</div>
+                    <div class="visitor-page">צפה באתר מאמן כושר</div>
+                    <div class="visitor-time">לפני 23 שניות</div>
+                </div>
+                <div class="visitor-item">
+                    <div class="visitor-location">🇮🇱 חיפה</div>
+                    <div class="visitor-page">לחץ על דמו יוגה</div>
+                    <div class="visitor-time">לפני 1 דקה</div>
+                </div>
+                <div class="visitor-item">
+                    <div class="visitor-location">🇮🇱 ירושלים</div>
+                    <div class="visitor-page">השתמש במחשבון פיצויים</div>
+                    <div class="visitor-time">לפני 2 דקות</div>
+                </div>
+                <div class="visitor-item">
+                    <div class="visitor-location">🇮🇱 באר שבע</div>
+                    <div class="visitor-page">שלח הודעת WhatsApp</div>
+                    <div class="visitor-time">לפני 3 דקות</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-grid">
+            <div class="chart-card">
+                <h3 class="chart-title">ביקורים יומיים - השבוע האחרון</h3>
+                <div class="chart-container">
+                    <div class="line-chart" id="visitsChart">
+                        <canvas width="100%" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="chart-card">
+                <h3 class="chart-title">תבניות פופולריות</h3>
+                <div class="chart-container">
+                    <div class="chart-bar" style="width: 85%;">
+                        <span class="chart-bar-label">מאמן כושר</span>
+                        <span class="chart-bar-value">347</span>
+                    </div>
+                    <div class="chart-bar" style="width: 72%;">
+                        <span class="chart-bar-label">עורכי דין</span>
+                        <span class="chart-bar-value">289</span>
+                    </div>
+                    <div class="chart-bar" style="width: 65%;">
+                        <span class="chart-bar-label">יוגה</span>
+                        <span class="chart-bar-value">265</span>
+                    </div>
+                    <div class="chart-bar" style="width: 58%;">
+                        <span class="chart-bar-label">תזונאית</span>
+                        <span class="chart-bar-value">234</span>
+                    </div>
+                    <div class="chart-bar" style="width: 45%;">
+                        <span class="chart-bar-label">פסיכולוגיה</span>
+                        <span class="chart-bar-value">183</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="analytics-tables">
+            <div class="table-card">
+                <h3 class="table-title">מקורות תנועה</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>מקור</th>
+                            <th>ביקורים</th>
+                            <th>שיעור</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>🔍 Google Search</td>
+                            <td>1,247</td>
+                            <td>43.8%</td>
+                        </tr>
+                        <tr>
+                            <td>📱 Facebook</td>
+                            <td>789</td>
+                            <td>27.7%</td>
+                        </tr>
+                        <tr>
+                            <td>📧 Direct</td>
+                            <td>456</td>
+                            <td>16.0%</td>
+                        </tr>
+                        <tr>
+                            <td>💼 LinkedIn</td>
+                            <td>234</td>
+                            <td>8.2%</td>
+                        </tr>
+                        <tr>
+                            <td>🌐 אחר</td>
+                            <td>121</td>
+                            <td>4.3%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="table-card">
+                <h3 class="table-title">התנהגות משתמשים</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>מדד</th>
+                            <th>ערך</th>
+                            <th>שינוי</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>זמן ממוצע באתר</td>
+                            <td>3:42</td>
+                            <td style="color: #28a745;">+12%</td>
+                        </tr>
+                        <tr>
+                            <td>דפים לביקור</td>
+                            <td>2.8</td>
+                            <td style="color: #28a745;">+8%</td>
+                        </tr>
+                        <tr>
+                            <td>שיעור יציאה</td>
+                            <td>34.2%</td>
+                            <td style="color: #28a745;">-5%</td>
+                        </tr>
+                        <tr>
+                            <td>משתמשים חוזרים</td>
+                            <td>28.5%</td>
+                            <td style="color: #28a745;">+15%</td>
+                        </tr>
+                        <tr>
+                            <td>מובייל/דסקטופ</td>
+                            <td>68/32</td>
+                            <td style="color: #ffc107;">+3%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="insights-section">
+            <h3 class="insights-title">תובנות והמלצות חכמות</h3>
+            
+            <div class="insight-item">
+                <div class="insight-text">
+                    🎯 <strong>תבנית מאמן הכושר</strong> זוכה להצלחה יוצאת דופן עם 347 צפיות השבוע
+                </div>
+                <div class="insight-action">
+                    💡 המלצה: בנה עוד תבניות בתחום הבריאות והכושר
+                </div>
+            </div>
+            
+            <div class="insight-item">
+                <div class="insight-text">
+                    📱 <strong>68% מהביקורים</strong> מגיעים ממכשירים ניידים
+                </div>
+                <div class="insight-action">
+                    💡 המלצה: וודא שכל התבניות מותאמות מושלם למובייל
+                </div>
+            </div>
+            
+            <div class="insight-item">
+                <div class="insight-text">
+                    ⚖️ <strong>תבנית עורכי הדין</strong> מושכת תנועה גבוהה ושיעור המרה מעולה
+                </div>
+                <div class="insight-action">
+                    💡 המלצה: פתח עוד תבניות בתחום העסקי והמשפטי
+                </div>
+            </div>
+            
+            <div class="insight-item">
+                <div class="insight-text">
+                    🕐 <strong>זמן השהייה הארוך</strong> (3:42) מעיד על תוכן איכותי ומעניין
+                </div>
+                <div class="insight-action">
+                    💡 המלצה: המשך לשמור על רמת התוכן הגבוהה
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Real-time data simulation
+        function updateRealtimeData() {
+            const locations = ['תל אביב', 'חיפה', 'ירושלים', 'באר שבע', 'נתניה', 'אשדוד', 'ראשון לציון'];
+            const actions = [
+                'צפה באתר מאמן כושר',
+                'לחץ על דמו יוגה', 
+                'השתמש במחשבון פיצויים',
+                'שלח הודעת WhatsApp',
+                'צפה בתבנית פסיכולוגיה',
+                'עיין במחירים',
+                'לחץ על דמו תזונאית'
+            ];
+            
+            const container = document.getElementById('realtimeVisitors');
+            const newActivity = document.createElement('div');
+            newActivity.className = 'visitor-item';
+            newActivity.style.opacity = '0';
+            newActivity.style.transform = 'translateY(-20px)';
+            
+            const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+            const randomAction = actions[Math.floor(Math.random() * actions.length)];
+            
+            newActivity.innerHTML = `
+                <div class="visitor-location">🇮🇱 ${randomLocation}</div>
+                <div class="visitor-page">${randomAction}</div>
+                <div class="visitor-time">כעת</div>
+            `;
+            
+            container.insertBefore(newActivity, container.firstChild);
+            
+            // Animation
+            setTimeout(() => {
+                newActivity.style.transition = 'all 0.5s ease';
+                newActivity.style.opacity = '1';
+                newActivity.style.transform = 'translateY(0)';
+            }, 100);
+            
+            // Remove old items
+            if (container.children.length > 6) {
+                container.removeChild(container.lastChild);
+            }
+            
+            // Update time for existing items
+            Array.from(container.children).forEach((item, index) => {
+                const timeElement = item.querySelector('.visitor-time');
+                if (index === 0) return;
+                
+                const currentTime = timeElement.textContent;
+                if (currentTime === 'כעת') {
+                    timeElement.textContent = 'לפני 30 שניות';
+                } else if (currentTime.includes('שניות')) {
+                    const seconds = parseInt(currentTime.match(/\d+/)[0]) + 30;
+                    if (seconds >= 60) {
+                        timeElement.textContent = `לפני ${Math.floor(seconds/60)} דקה`;
+                    } else {
+                        timeElement.textContent = `לפני ${seconds} שניות`;
+                    }
+                } else if (currentTime.includes('דקה')) {
+                    const minutes = parseInt(currentTime.match(/\d+/)[0]) + 1;
+                    timeElement.textContent = `לפני ${minutes} דקות`;
+                }
+            });
+        }
+
+        // Update stats
+        function updateStats() {
+            const stats = {
+                visitors: Math.floor(Math.random() * 50) + 2800,
+                conversion: (Math.random() * 5 + 10).toFixed(1),
+                whatsapp: Math.floor(Math.random() * 20) + 180
+            };
+            
+            document.getElementById('totalVisitors').textContent = stats.visitors.toLocaleString();
+            document.getElementById('conversionRate').textContent = stats.conversion + '%';
+            document.getElementById('whatsappClicks').textContent = stats.whatsapp;
+        }
+
+        // Refresh data function
+        function refreshData() {
+            const btn = document.querySelector('.refresh-btn');
+            btn.innerHTML = '🔄 מרענן...';
+            btn.disabled = true;
+            
+            setTimeout(() => {
+                updateStats();
+                btn.innerHTML = '🔄 רענן נתונים';
+                btn.disabled = false;
+                alert('הנתונים עודכנו בהצלחה!');
+            }, 1500);
+        }
+
+        // Filter change handlers
+        document.getElementById('periodFilter').addEventListener('change', function() {
+            console.log('Period changed to:', this.value);
+            updateStats();
+        });
+
+        document.getElementById('templateFilter').addEventListener('change', function() {
+            console.log('Template filter changed to:', this.value);
+        });
+
+        // Initialize
+        setInterval(updateRealtimeData, 8000);
+        setInterval(updateStats, 30000);
+        
+        // Initial load
+        updateRealtimeData();
+    </script>
+</body>
+</html>
